@@ -30,7 +30,11 @@ public class BankAccountService {
         return Arrays.asList(accounts);
     }
 
-    private List<BankAccount> bankAccountList;
+    public void openAccount(BankAccount bankAccount) {
+        String url = "http://localhost:8091/api/bankaccount";
+
+        restTemplate.postForObject(url, bankAccount, BankAccount.class);
+    }
 
     @PostConstruct
     public void postConstruct() {
@@ -39,9 +43,19 @@ public class BankAccountService {
     public void createBankAccount(BankAccount bankAccount) {
         bankAccountList.add(bankAccount);
     }
+    private List<BankAccount> bankAccountList;
 
     public List<BankAccount> getBankAccounts() {
-        return new ArrayList<>(bankAccountList);
+        String url = "http://localhost:8091/api/bankaccount/";
+
+        ResponseEntity<BankAccount[]> response =
+                restTemplate.getForEntity(url, BankAccount[].class);
+
+        BankAccount[] accounts = response.getBody();
+        return Arrays.asList(accounts);
     }
+
+
+
 
 }
