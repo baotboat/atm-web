@@ -1,13 +1,11 @@
 package th.ac.ku.atm.service;
 
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import th.ac.ku.atm.model.BankAccount;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +19,8 @@ public class BankAccountService {
     }
 
     public List<BankAccount> getCustomerBankAccount(int customerId) {
-        String url = "http://localhost:8091/api/bankaccount/customer/" + customerId;
+        String url = "http://localhost:8091/api/bankaccount/customer/" +
+                customerId;
         ResponseEntity<BankAccount[]> response =
                 restTemplate.getForEntity(url, BankAccount[].class);
 
@@ -29,22 +28,6 @@ public class BankAccountService {
 
         return Arrays.asList(accounts);
     }
-
-    public void openAccount(BankAccount bankAccount) {
-        String url = "http://localhost:8091/api/bankaccount";
-
-        restTemplate.postForObject(url, bankAccount, BankAccount.class);
-    }
-
-    @PostConstruct
-    public void postConstruct() {
-        this.bankAccountList = new ArrayList<>();
-    }
-    public void createBankAccount(BankAccount bankAccount) {
-        bankAccountList.add(bankAccount);
-    }
-    private List<BankAccount> bankAccountList;
-
     public List<BankAccount> getBankAccounts() {
         String url = "http://localhost:8091/api/bankaccount/";
 
@@ -53,6 +36,11 @@ public class BankAccountService {
 
         BankAccount[] accounts = response.getBody();
         return Arrays.asList(accounts);
+    }
+    public void openAccount(BankAccount bankAccount) {
+        String url = "http://localhost:8091/api/bankaccount";
+
+        restTemplate.postForObject(url, bankAccount, BankAccount.class);
     }
     public BankAccount getBankAccount(int id) {
         String url = "http://localhost:8091/api/bankaccount/" + id;
@@ -68,9 +56,9 @@ public class BankAccountService {
                 bankAccount.getId();
         restTemplate.put(url, bankAccount);
     }
+    public void deleteBankAccount(BankAccount bankAccount) {
+        String url = "http://localhost:8091/api/bankaccount/" + bankAccount.getId();
 
-
-
-
-
+        restTemplate.delete(url);
+    }
 }

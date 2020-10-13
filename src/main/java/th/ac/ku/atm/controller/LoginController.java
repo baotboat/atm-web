@@ -10,6 +10,8 @@ import th.ac.ku.atm.model.Customer;
 import th.ac.ku.atm.service.BankAccountService;
 import th.ac.ku.atm.service.CustomerService;
 
+
+
 @Controller
 @RequestMapping("/login")
 public class LoginController {
@@ -17,11 +19,10 @@ public class LoginController {
     private CustomerService customerService;
     private BankAccountService bankAccountService;
 
-
-    public LoginController(CustomerService customerService, BankAccountService bankAccountService) {
+    public LoginController(CustomerService customerService,
+                           BankAccountService bankAccountService) {
         this.customerService = customerService;
         this.bankAccountService = bankAccountService;
-
     }
 
     @GetMapping()

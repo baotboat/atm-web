@@ -1,6 +1,5 @@
 package th.ac.ku.atm.controller;
 
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,28 +10,27 @@ import th.ac.ku.atm.service.BankAccountService;
 @RequestMapping("/bankaccount")
 public class BankAccountController {
 
-    private BankAccountService bankAccountService;
+    private BankAccountService accountService;
 
-    public BankAccountController(BankAccountService bankAccountService) {
-        this.bankAccountService = bankAccountService;
+    public BankAccountController(BankAccountService accountService) {
+        this.accountService = accountService;
     }
 
     @GetMapping
     public String getBankAccountPage(Model model) {
-        model.addAttribute("bankaccounts", bankAccountService.getBankAccounts());
+        model.addAttribute("bankaccounts", accountService.getBankAccounts());
         return "bankaccount";
     }
 
     @PostMapping
     public String openAccount(@ModelAttribute BankAccount bankAccount, Model model) {
-        bankAccountService.openAccount(bankAccount);
-        model.addAttribute("bankaccounts",bankAccountService.getBankAccounts());
+        accountService.openAccount(bankAccount);
+        model.addAttribute("bankaccounts",accountService.getBankAccounts());
         return "redirect:bankaccount";
     }
-
     @GetMapping("/edit/{id}")
     public String getEditBankAccountPage(@PathVariable int id, Model model) {
-        BankAccount account = bankAccountService.getBankAccount(id);
+        BankAccount account = accountService.getBankAccount(id);
         model.addAttribute("bankAccount", account);
         return "bankaccount-edit";
     }
@@ -40,14 +38,22 @@ public class BankAccountController {
     @PostMapping("/edit/{id}")
     public String editAccount(@PathVariable int id,
                               @ModelAttribute BankAccount bankAccount,
-                              Model model) {
+                              Model model, double amount, String btn) {
 
-        bankAccountService.editBankAccount(bankAccount);
-        model.addAttribute("bankaccounts",bankAccountService.getBankAccounts());
+        BankAccount record = accountService.getBankAccount(bankAccount.getId());
+        if (btn.equals("withdraw"))
+            record.setBalance(record.getBalance()-amount);
+        else if (btn.equals("deposit"))
+            record.setBalance(record.getBalance()+amount);
+        accountService.editBankAccount(record);
+
+        model.addAttribute("bankaccounts",accountService.getBankAccounts());
         return "redirect:/bankaccount";
     }
-
-
-
-
+    @PostMapping("/delete/{id}")
+    public String deleteAccount(@PathVariable int id, @ModelAttribute BankAccount bankAccount, Model model) {
+        accountService.deleteBankAccount(bankAccount);
+        model.addAttribute("bankAccount", accountService.getBankAccounts());
+        return "redirect:/bankaccount";
+    }
 }
